@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Converter</title>
+    <style>
+        .shadow{
+          box-shadow:0px 0px 20px rgb(2 54 105 / 15%) !important;
+         margin-top:20px;
+           padding: 20px;
+    border-radius: 20px;
+          
+        }
+        .uploadimg{
+            margin-bottom:3rem !important
+        
+        }
+        .shadow div{
+          width: 30%;
+        }
+        .shadow div img{
+          margin-top: 10px;}
+        .btn-danger{
+            background :#dc3545;
+           border-color: #dc3545;
+           border:1px solid #dc3545;
+           margin-top: 10px;
+        }
+        .btn{
+           border-radius: 20px;
+           margin-bottom: 30px;
+          padding: 5px;
+              color: #fff;
+        }
+        .btn-primary{
+        margin-top: 5px;
+        margin-bottom: 5px;
+            background :#2e9100;
+           border-color: #2e9100;
+           border:1px solid #257400;
+          
+        
+        }
+        .upload-area{
+        width: 70%;
+          margin: auto;
+        }
+        .fileuploadform{
+        border: 1px solid;
+        -webkit-border-radius: 60px;
+        color: rgb(46, 145, 0);
+        padding: 20px;
+        
+        }
+        .input-doc{
+          padding: 200px;
+          text-align: center;
+          display:none;
+        }
+        .upload-text{
+          text-align: center;
+          font-size: 2rem;
+          color: rbg(46, 145, 0);
+        }
+        </style>
+        <!-------------------------------------------------- Created by BizOAllu and Avyakta --------------------->
+        <div class="upload-area">
+          <form class="fileuploadform" align="center">
+            <p class="upload-text">
+              Search and upload your CV, or you can Drag and drop it here
+            </p>
+            <br />
+            <img src="https://cdn0.iconfinder.com/data/icons/networking-web-development/40/seo-21-512.png" width="50px" class="uploadimg" alt="uploadingimg" />
+            <br />
+            <input type="file" class="input-doc" id="fileInput"> <!-- Added an ID -->
+            <button type="button" class="btn btn-primary btn-lg" id="upload-button">UPLOAD</button> <!-- Added an ID -->
+          </form>
+          <div class="shadow">
+            <div  id="outputArea">
+             
+            </div>
+            <div>
+              <p class="file-name">
+               Ready to Download
+              </p>
+            </div>
+            <div>
+        <button class="btn btn-sm btn-danger" id="download-button" onclick="downloadAllImages()">Download All</button>
+            </div>
+          </div>
+        </div>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+
+<!-------------------------------------------------- Don't Remove the Names ------------------------------>        
+<!-------------------------------------------------- Created by BizOAllu and Avyakta --------------------->
+<!-------------------------------------------------- Created by BizOAllu and Avyakta --------------------->
+<!-------------------------------------------------- Created by BizOAllu and Avyakta --------------------->
+<!-------------------------------------------------- Created by BizOAllu and Avyakta --------------------->
+<!-------------------------------------------------- Created by BizOAllu and Avyakta --------------------->
+
+ 
+        <script>
+          var inputdoc = document.querySelector('.input-doc');
+            var shadow = document.querySelector('.shadow');
+        shadow.style.display = 'none';
+          var filename = document.querySelector('.file-name');
+          var inputform = document.querySelector('.fileuploadform');
+          var fileInput = document.querySelector('#fileInput');
+          var uploadButton = document.querySelector('#upload-button');
+        
+          inputform.addEventListener('click', function () {
+            inputdoc.click();
+          });
+        
+          inputdoc.addEventListener('change', function () {
+            if (inputdoc.files.length > 0) {
+                    shadow.style.display = 'flex';
+            } 
+     
+          });
+        
+          inputform.addEventListener("dragover", function (e) {
+            e.preventDefault();
+            inputform.classList.add("drag-over");
+          });
+        
+          inputform.addEventListener("dragleave", function (e) {
+            e.preventDefault();
+            inputform.classList.remove("drag-over");
+          });
+        
+          inputform.addEventListener("drop", function (e) {
+          e.preventDefault();
+          inputform.classList.remove("drag-over");
+        
+          var droppedFile = e.dataTransfer.files[0];
+          if (droppedFile) {
+         
+            filename.innerHTML = droppedFile.name;
+            shadow.style.display = 'flex';
+        
+            inputdoc.files = e.dataTransfer.files;
+          } else {
+          
+            filename.innerHTML = '';
+            inputdoc.value = ''; 
+          }
+        });
+        
+          uploadButton.addEventListener("click", function () {
+            console.log("File upload initiated");
+          });
+          
+    
+        </script>
+
+
+    <script>
+        function webpToJpg(inputFile, outputArea) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                var image = new Image();
+                image.onload = function () {
+                    var canvas = document.createElement('canvas');
+                    canvas.width = this.naturalWidth;
+                    canvas.height = this.naturalHeight;
+                    canvas.getContext('2d').drawImage(this, 0, 0);
+                    var outputImage = document.createElement('img');
+                    outputImage.classList.add('outputImage');
+                    outputImage.src = canvas.toDataURL('image/jpeg');
+                    outputArea.appendChild(outputImage);
+                };
+                image.src = e.target.result;
+            }
+            reader.readAsDataURL(inputFile);
+        }
+
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            var files = e.target.files;
+            var outputArea = document.getElementById('outputArea');
+
+            for (var i = 0; i < files.length; i++) {
+                var file = files[i];
+                webpToJpg(file, outputArea);
+            }
+        });
+
+
+  
+    function downloadAllImages() {
+        var zip = new JSZip();
+        var outputArea = document.getElementById('outputArea');
+        var images = outputArea.getElementsByTagName('img');
+
+        for (var i = 0; i < images.length; i++) {
+            var img = images[i];
+            var canvas = document.createElement('canvas');
+            var ctx = canvas.getContext('2d');
+            canvas.width = img.naturalWidth || img.width;
+            canvas.height = img.naturalHeight || img.height;
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            var imgData = canvas.toDataURL('image/jpeg', 1.0).split(',')[1]; 
+            var fileName = 'image' + (i + 1) + '.jpeg'; 
+
+            zip.file(fileName, imgData, { base64: true });
+        }
+
+        zip.generateAsync({ type: 'blob' }).then(function(content) {
+            saveAs(content, 'images.zip'); // Trigger download
+        });
+    }
+    </script>
+
+            <!-------------------------------------------------- Created by BizOAllu and Avyakta --------------------->
+
+</body>
+</html>
